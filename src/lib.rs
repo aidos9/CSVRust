@@ -1,23 +1,23 @@
 pub mod parser {
 
-    pub struct XMLRow {
+    pub struct CSVRow {
         cells: Vec<String>,
     }
 
-    pub struct XMLDocument {
-        header: XMLRow,
-        contents: Vec<XMLRow>,
+    pub struct CSVDocument {
+        header: CSVRow,
+        contents: Vec<CSVRow>,
     }
 
-    impl XMLDocument {
+    impl CSVDocument {
         /*pub fn parse_string() -> XMLDocument
         {
 
         }*/
     }
 
-    impl XMLRow {
-        pub fn parse_line(line: &String) -> XMLRow {
+    impl CSVRow {
+        pub fn parse_line(line: &String) -> CSVRow {
             let mut in_quotes = false;
             let mut current_cell = String::new();
             let mut cells: Vec<String> = Vec::new();
@@ -31,7 +31,7 @@ pub mod parser {
                 }
             }
 
-            return XMLRow {cells};
+            return CSVRow {cells};
         }
     }
 }
@@ -44,6 +44,6 @@ mod tests {
     fn test_parse_line()
     {
         let line: String = "header,1,,bob".to_string();
-        let row = parser::XMLRow::parse_line(&line);
+        let row = parser::CSVRow::parse_line(&line);
     }
 }

@@ -1,5 +1,5 @@
 [package]
-name = "xml_parser"
+name = "csv_parser"
 version = "0.1.0"
 authors = ["aidos9"]
 edition = "2018"
