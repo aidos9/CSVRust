@@ -25,18 +25,15 @@ impl CSVRow {
                 quoted = true;
 
                 // We need to add another quote to one side of the existing quote
-                let mut indexes: Vec<usize> = vec![];
+                let mut count = 0;
+                let chars: Vec<char> = working.chars().collect();
 
-                // We have to do this to prevent borrow errors.
-                {
-                    let findings = working.match_indices('"').clone();
-                    for (i,_) in findings {
-                        indexes.push(i);
+                for i in 0..chars.len() {
+                    if chars[i] == '"'
+                    {
+                        working.insert(i+1+count, '"'); // Because the length of the original string changes as we add " we need to adjust for this by counting how many we have added
+                        count += 1;
                     }
-                }
-
-                for i in indexes {
-                    working.insert(i+1, '"');
                 }
             }
 
@@ -232,6 +229,14 @@ mod tests {
         let row: CSVRow = CSVRow {cells: vec!["\"james\"".to_string(), "none".to_string(), "none".to_string(), "none".to_string()]};
 
         assert_eq!(row.to_string(), "\"\"\"james\"\"\",none,none,none");
+    }
+
+    #[test]
+    fn test_to_string_quotes_2()
+    {
+        let row: CSVRow = CSVRow {cells: vec!["\"james\", bob\",cat".to_string(), "none".to_string(), "none".to_string(), "none".to_string()]};
+
+        assert_eq!(row.to_string(), "\"\"\"james\"\", bob\"\",cat\",none,none,none");
     }
 
     #[test]
