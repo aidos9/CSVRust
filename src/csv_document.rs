@@ -17,10 +17,12 @@ impl CSVDocument {
     pub fn to_string(&self) -> String
     {
         let mut str = self.header.to_string();
+        str.push('\n');
 
         for i in 0..self.contents.len()
         {
             str += &self.contents[i].to_string();
+            str.push('\n');
         }
 
         return str;
@@ -214,5 +216,23 @@ mod tests {
             vec!["none", "james,\njohn\n catherine!", "none", "none"]
         );
         assert_eq!(doc.contents[1].cells, vec!["none", "none", "none", "none"]);
+    }
+
+    #[test]
+    fn test_to_string_single_line() {
+        let doc: CSVDocument = CSVDocument {header: csv_row::CSVRow {cells: vec![String::from("name"),String::from("dob"),String::from("location")]}, contents: vec![]};
+        assert_eq!(doc.to_string(), "name,dob,location\n");
+    }
+
+    #[test]
+    fn test_to_string_multi_line() {
+        let doc: CSVDocument = CSVDocument {header: csv_row::CSVRow {cells: vec![String::from("name"),String::from("dob"),String::from("location")]}, contents: vec![csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("NYC")]}]};
+        assert_eq!(doc.to_string(), "name,dob,location\njames,14/03/2000,NYC\n");
+    }
+
+    #[test]
+    fn test_to_string_multi_line_2() {
+        let doc: CSVDocument = CSVDocument {header: csv_row::CSVRow {cells: vec![String::from("name"),String::from("dob"),String::from("location")]}, contents: vec![csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("\"Jersey\"")]}]};
+        assert_eq!(doc.to_string(), "name,dob,location\njames,14/03/2000,\"\"\"Jersey\"\"\"\n");
     }
 }
