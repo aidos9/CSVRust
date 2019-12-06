@@ -1,10 +1,2 @@
-mod csv_document;
-
-use crate::csv_document::CSVDocument;
-
-pub mod parser {
-    use super::*;
-    pub fn parse_string(string: &String) -> Result<CSVDocument, &'static str> {
-        return Ok(CSVDocument::new());
-    }
-}
+pub mod csv_document;
+pub mod csv_row;

@@ -1,5 +1,5 @@
 #[path = "csv_row.rs"]
-mod csv_row;
+pub mod csv_row;
 
 pub struct CSVDocument {
     pub header: csv_row::CSVRow,
@@ -12,6 +12,11 @@ impl CSVDocument {
             header: csv_row::CSVRow::new(),
             contents: vec![],
         };
+    }
+
+    pub fn retrieve_cell(& mut self, row_index: usize, cell_index: usize) -> String
+    {
+        return self.contents[row_index].cells[cell_index].clone();
     }
 
     pub fn add_row(& mut self, row: csv_row::CSVRow)
