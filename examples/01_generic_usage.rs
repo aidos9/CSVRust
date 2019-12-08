@@ -1,6 +1,7 @@
 // Sample code for using the library.
-use csv_parser;
+extern crate csv_parser;
 
+// We want to fill out this struct.
 struct Person {
     first_name: String,
     last_name: String,
@@ -9,6 +10,7 @@ struct Person {
 }
 
 impl Person {
+    // We can define a method to construct the struct from a CSVRow
     pub fn construct_from_row(row: &csv_parser::CSVRow) -> Result<Person, &'static str> {
         if row.cells.len() != 4 {
             return Err("Expected 4 cells in the row.");
@@ -27,6 +29,7 @@ fn main() {
     let csv_string = String::from("first name,last name,DOB,email\njames,bob,00/00/2101,james@bob.com\ncatherine,crack,00/01/2102,catherine@crack.com\n");
     let doc: csv_parser::CSVDocument;
 
+    // Parse the CSV string and check for any errors
     match csv_parser::CSVDocument::parse_string(&csv_string) {
         Ok(d) => doc = d,
         Err(e) => {
