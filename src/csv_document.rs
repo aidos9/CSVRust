@@ -1,4 +1,5 @@
 use crate::csv_row::CSVRow;
+use crate::csv_row::CSVParseable;
 
 pub struct CSVDocument {
     pub header: CSVRow,
@@ -33,6 +34,20 @@ impl CSVDocument {
 
     pub fn row_count(&self) -> usize {
         return self.contents.len();
+    }
+
+    pub fn construct_vector<T: CSVParseable>(&self) -> Result<Vec<T>, &'static str> {
+        let mut items: Vec<T> = vec![];
+
+        for row in self.contents.clone() {
+            match T::construct_from_row(&row)
+            {
+                Ok(item) => items.push(item),
+                Err(e) => return Err(e),
+            }
+        }
+
+        return Ok(items);
     }
 
     pub fn to_string(&self) -> String {

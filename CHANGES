@@ -1,0 +1,5 @@
+Version 0.2
+Added the CSVParseable trait which provides a method for a CSVDocument to create a vector of that type. 
+
+Version 0.1
+Initial release.

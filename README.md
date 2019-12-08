@@ -1,8 +1,8 @@
 # CSVRust
-CSV Parsing Library written in rust
+CSV Parsing Library written in rust.
 
 ## Usage guide
-For an example project see the examples directory. To run an example use:
+For example projects see the examples directory. To run an example use:
 ```
 cargo run --example [EXAMPLE_NAME]
 ```
@@ -14,8 +14,14 @@ csv_parser::CSVDocument::parse_string("header01,header02");
 
 ## Documentation
 The CSVDocument and CSVRow structs are the two main structs of the library. They represent a row of CSV and the whole file.
+#### CSVParseable
+A trait that the CSVDocument class can construct.
+
+##### Methods
+```fn construct_from_row(row: &CSVRow) -> Result<Self, &'static str> where Self: Sized;``` : This should return an error if the number of cells in the row is not sufficient, or it should return itself as a new object.
+
 #### CSVDocument
-Represents the whole file.
+A struct that represents the whole file.
 
 ##### Fields:
 
@@ -34,12 +40,14 @@ Represents the whole file.
 
 ```fn row_count(&self) -> usize``` : Returns the number of rows in the contents field.
 
+'''fn construct_vector<T: CSVParseable>(&self) -> Result<Vec<T>, &'static str>''' : Creates a vector of items of the trait CSVParseable and returns them.
+
 ```fn to_string(&self) -> String``` : Serializes the document into a string of CSV.
 
 ```fn parse_string(input: &String) -> Result<CSVDocument, &'static str>``` : Parses a CSV string, supports quoted fields containing new lines, commas and quotes escaped with another quote e.g. "" represents one quote in the cell. Returns either a new document or an error message.
 
 #### CSVRow
-Represents a single row of the CSV file.
+A struct that represents a single row of the CSV file.
 
 ##### Fields:
 
