@@ -1,31 +1,27 @@
-#[path = "csv_row.rs"]
-pub mod csv_row;
+use crate::csv_row::CSVRow;
 
 pub struct CSVDocument {
-    pub header: csv_row::CSVRow,
-    pub contents: Vec<csv_row::CSVRow>,
+    pub header: CSVRow,
+    pub contents: Vec<CSVRow>,
 }
 
 impl CSVDocument {
     pub fn new() -> CSVDocument {
         return CSVDocument {
-            header: csv_row::CSVRow::new(),
+            header: CSVRow::new(),
             contents: vec![],
         };
     }
 
-    pub fn retrieve_cell(& mut self, row_index: usize, cell_index: usize) -> String
-    {
+    pub fn retrieve_cell(&mut self, row_index: usize, cell_index: usize) -> String {
         return self.contents[row_index].cells[cell_index].clone();
     }
 
-    pub fn add_row(& mut self, row: csv_row::CSVRow)
-    {
+    pub fn add_row(&mut self, row: CSVRow) {
         self.contents.push(row);
     }
 
-    pub fn remove_row(& mut self, index: usize) -> Result<(), &'static str>
-    {
+    pub fn remove_row(&mut self, index: usize) -> Result<(), &'static str> {
         if index >= self.contents.len() {
             return Err("Index is too large.");
         }
@@ -35,18 +31,15 @@ impl CSVDocument {
         return Ok(());
     }
 
-    pub fn row_count (&self) -> usize
-    {
+    pub fn row_count(&self) -> usize {
         return self.contents.len();
     }
 
-    pub fn to_string(&self) -> String
-    {
+    pub fn to_string(&self) -> String {
         let mut str = self.header.to_string();
         str.push('\n');
 
-        for i in 0..self.contents.len()
-        {
+        for i in 0..self.contents.len() {
             str += &self.contents[i].to_string();
             str.push('\n');
         }
@@ -55,7 +48,7 @@ impl CSVDocument {
     }
 
     pub fn parse_string(input: &String) -> Result<CSVDocument, &'static str> {
-        let mut header_row = csv_row::CSVRow::new();
+        let mut header_row = CSVRow::new();
         let mut header_row_set = false;
         let mut contents_rows = vec![];
 
@@ -93,7 +86,7 @@ impl CSVDocument {
                     line = String::new();
                     header_row_set = true;
                 } else {
-                    let res = csv_row::CSVRow::parse_line_new(&line);
+                    let res = CSVRow::parse_line_new(&line);
 
                     let current_row;
 
@@ -125,7 +118,7 @@ impl CSVDocument {
                     Ok(_) => (),
                 };
             } else {
-                let res = csv_row::CSVRow::parse_line_new(&line);
+                let res = CSVRow::parse_line_new(&line);
 
                 match res {
                     Err(e) => return Err(e),
@@ -246,33 +239,111 @@ mod tests {
 
     #[test]
     fn test_to_string_single_line() {
-        let doc: CSVDocument = CSVDocument {header: csv_row::CSVRow {cells: vec![String::from("name"),String::from("dob"),String::from("location")]}, contents: vec![]};
+        let doc: CSVDocument = CSVDocument {
+            header: CSVRow {
+                cells: vec![
+                    String::from("name"),
+                    String::from("dob"),
+                    String::from("location"),
+                ],
+            },
+            contents: vec![],
+        };
         assert_eq!(doc.to_string(), "name,dob,location\n");
     }
 
     #[test]
     fn test_to_string_multi_line() {
-        let doc: CSVDocument = CSVDocument {header: csv_row::CSVRow {cells: vec![String::from("name"),String::from("dob"),String::from("location")]}, contents: vec![csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("NYC")]}]};
+        let doc: CSVDocument = CSVDocument {
+            header: CSVRow {
+                cells: vec![
+                    String::from("name"),
+                    String::from("dob"),
+                    String::from("location"),
+                ],
+            },
+            contents: vec![CSVRow {
+                cells: vec![
+                    String::from("james"),
+                    String::from("14/03/2000"),
+                    String::from("NYC"),
+                ],
+            }],
+        };
         assert_eq!(doc.to_string(), "name,dob,location\njames,14/03/2000,NYC\n");
     }
 
     #[test]
     fn test_to_string_multi_line_2() {
-        let doc: CSVDocument = CSVDocument {header: csv_row::CSVRow {cells: vec![String::from("name"),String::from("dob"),String::from("location")]}, contents: vec![csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("\"Jersey\"")]}]};
-        assert_eq!(doc.to_string(), "name,dob,location\njames,14/03/2000,\"\"\"Jersey\"\"\"\n");
+        let doc: CSVDocument = CSVDocument {
+            header: CSVRow {
+                cells: vec![
+                    String::from("name"),
+                    String::from("dob"),
+                    String::from("location"),
+                ],
+            },
+            contents: vec![CSVRow {
+                cells: vec![
+                    String::from("james"),
+                    String::from("14/03/2000"),
+                    String::from("\"Jersey\""),
+                ],
+            }],
+        };
+        assert_eq!(
+            doc.to_string(),
+            "name,dob,location\njames,14/03/2000,\"\"\"Jersey\"\"\"\n"
+        );
     }
 
     #[test]
     fn test_row_count() {
-        let doc: CSVDocument = CSVDocument {header: csv_row::CSVRow {cells: vec![String::from("name"),String::from("dob"),String::from("location")]}, contents: vec![csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("\"Jersey\"")]}]};
+        let doc: CSVDocument = CSVDocument {
+            header: CSVRow {
+                cells: vec![
+                    String::from("name"),
+                    String::from("dob"),
+                    String::from("location"),
+                ],
+            },
+            contents: vec![CSVRow {
+                cells: vec![
+                    String::from("james"),
+                    String::from("14/03/2000"),
+                    String::from("\"Jersey\""),
+                ],
+            }],
+        };
         assert_eq!(doc.row_count(), 1);
     }
 
     #[test]
     fn test_add_row() {
-        let mut doc: CSVDocument = CSVDocument {header: csv_row::CSVRow {cells: vec![String::from("name"),String::from("dob"),String::from("location")]}, contents: vec![csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("\"Jersey\"")]}]};
+        let mut doc: CSVDocument = CSVDocument {
+            header: CSVRow {
+                cells: vec![
+                    String::from("name"),
+                    String::from("dob"),
+                    String::from("location"),
+                ],
+            },
+            contents: vec![CSVRow {
+                cells: vec![
+                    String::from("james"),
+                    String::from("14/03/2000"),
+                    String::from("\"Jersey\""),
+                ],
+            }],
+        };
         assert_eq!(doc.row_count(), 1);
-        let row = csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("\"Jersey\"")]};
+        let row = CSVRow {
+            cells: vec![
+                String::from("james"),
+                String::from("14/03/2000"),
+                String::from("\"Jersey\""),
+            ],
+        };
         doc.add_row(row);
         assert_eq!(doc.row_count(), 2);
     }
@@ -280,13 +351,33 @@ mod tests {
     #[test]
     #[should_panic(expected = "Index is too large.")]
     fn test_remove_row_fail() {
-        let mut doc: CSVDocument = CSVDocument {header: csv_row::CSVRow {cells: vec![String::from("name"),String::from("dob"),String::from("location")]}, contents: vec![csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("\"Jersey\"")]}]};
+        let mut doc: CSVDocument = CSVDocument {
+            header: CSVRow {
+                cells: vec![
+                    String::from("name"),
+                    String::from("dob"),
+                    String::from("location"),
+                ],
+            },
+            contents: vec![CSVRow {
+                cells: vec![
+                    String::from("james"),
+                    String::from("14/03/2000"),
+                    String::from("\"Jersey\""),
+                ],
+            }],
+        };
         assert_eq!(doc.row_count(), 1);
-        let row = csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("\"Jersey\"")]};
+        let row = CSVRow {
+            cells: vec![
+                String::from("james"),
+                String::from("14/03/2000"),
+                String::from("\"Jersey\""),
+            ],
+        };
         doc.add_row(row);
         assert_eq!(doc.row_count(), 2);
-        match doc.remove_row(3)
-        {
+        match doc.remove_row(3) {
             Ok(_) => (),
             Err(e) => panic!(e),
         }
@@ -294,13 +385,33 @@ mod tests {
 
     #[test]
     fn test_remove_row() {
-        let mut doc: CSVDocument = CSVDocument {header: csv_row::CSVRow {cells: vec![String::from("name"),String::from("dob"),String::from("location")]}, contents: vec![csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("\"Jersey\"")]}]};
+        let mut doc: CSVDocument = CSVDocument {
+            header: CSVRow {
+                cells: vec![
+                    String::from("name"),
+                    String::from("dob"),
+                    String::from("location"),
+                ],
+            },
+            contents: vec![CSVRow {
+                cells: vec![
+                    String::from("james"),
+                    String::from("14/03/2000"),
+                    String::from("\"Jersey\""),
+                ],
+            }],
+        };
         assert_eq!(doc.row_count(), 1);
-        let row = csv_row::CSVRow {cells: vec![String::from("james"),String::from("14/03/2000"),String::from("\"Jersey\"")]};
+        let row = CSVRow {
+            cells: vec![
+                String::from("james"),
+                String::from("14/03/2000"),
+                String::from("\"Jersey\""),
+            ],
+        };
         doc.add_row(row);
         assert_eq!(doc.row_count(), 2);
-        match doc.remove_row(0)
-        {
+        match doc.remove_row(0) {
             Ok(_) => (),
             Err(e) => panic!(e),
         }
