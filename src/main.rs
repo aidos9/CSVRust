@@ -9,9 +9,7 @@ struct Person {
 }
 
 impl Person {
-    pub fn construct_from_row(
-        row: &csv_parser::CSVRow,
-    ) -> Result<Person, &'static str> {
+    pub fn construct_from_row(row: &csv_parser::CSVRow) -> Result<Person, &'static str> {
         if row.cells.len() != 4 {
             return Err("Expected 4 cells in the row.");
         }
