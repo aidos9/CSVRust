@@ -1,6 +1,8 @@
 // Allows for an object to be created from a CSVRow
 pub trait CSVParseable {
-    fn construct_from_row(row: &CSVRow) -> Result<Self, &'static str> where Self: Sized;
+    fn construct_from_row(row: &CSVRow) -> Result<Self, &'static str>
+    where
+        Self: Sized;
 }
 
 #[derive(Clone)]

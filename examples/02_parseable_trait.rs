@@ -11,8 +11,7 @@ struct Person {
 
 impl csv_parser::CSVParseable for Person {
     // By implementing Parseable we are able to use the CSVDocument method for constructing an Object
-    fn construct_from_row(row: &csv_parser::CSVRow) -> Result<Person, &'static str>
-    {
+    fn construct_from_row(row: &csv_parser::CSVRow) -> Result<Person, &'static str> {
         if row.cells.len() != 4 {
             return Err("Expected 4 cells in the row.");
         }

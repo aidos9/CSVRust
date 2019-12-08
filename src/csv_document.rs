@@ -1,5 +1,5 @@
-use crate::csv_row::CSVRow;
 use crate::csv_row::CSVParseable;
+use crate::csv_row::CSVRow;
 
 pub struct CSVDocument {
     pub header: CSVRow,
@@ -40,8 +40,7 @@ impl CSVDocument {
         let mut items: Vec<T> = vec![];
 
         for row in self.contents.clone() {
-            match T::construct_from_row(&row)
-            {
+            match T::construct_from_row(&row) {
                 Ok(item) => items.push(item),
                 Err(e) => return Err(e),
             }
